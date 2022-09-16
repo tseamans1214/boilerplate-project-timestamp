@@ -25,6 +25,10 @@ app.get("/api/hello", function (req, res) {
 });
 
 app.get("/api/:date", function (req, res) {
+  var testDate = new Date(req.params.date);
+  if (testDate.getTime() !== testDate.getTime()) {
+    res.json({ error : "Invalid Date" });
+  }
   if(req.params.date.includes("-")) {
     var date = new Date(req.params.date);
     const timestampInMs = date.getTime();
