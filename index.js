@@ -24,6 +24,23 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api/:date", function (req, res) {
+  if(req.params.date.includes("-")) {
+    var date = new Date(req.params.date);
+    const timestampInMs = date.getTime();
+
+    const unixTimestamp = Math.floor(date.getTime());
+    res.json({"unix": unixTimestamp, "utc": date.toUTCString()});
+  } else {
+    let unix_timestamp = req.params.date;
+    // Create a new JavaScript Date object based on the timestamp
+    // multiplied by 1000 so that the argument is in milliseconds, not seconds.
+    var date = new Date(unix_timestamp * 1000);
+    res.json({"unix": unix_timestamp, "utc": date.toUTCString()});
+  }
+  
+});
+
 
 
 // listen for requests :)
