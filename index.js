@@ -24,23 +24,38 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-app.get("/api/:date", function (req, res) {
+app.get("/api/:date?", function (req, res) {
   var testDate = new Date(req.params.date);
-  if (testDate.getTime() !== testDate.getTime()) {
+  var testDateUnix = new Date(req.params.date * 1000);
+  var validUnixDate = false;
+  var validStringDate = false;
+  if (testDate.getTime() === testDate.getTime()) {
+    validStringDate = true;
+  }
+  if (testDateUnix.getTime() === testDateUnix.getTime()) {
+    validUnixDate = true;
+  }
+  // Check if empty
+  if (req.params.date == null || req.params.date == "") {
+    var date = new Date();
+    const unixTimestamp = Math.floor(date.getTime());
+    res.json({"unix": unixTimestamp, "utc": date.toUTCString()});
+  }
+  // Check if it is a regular date and it is valid
+  // And Check if it is a unix date and it is valid
+  else if (validStringDate === false && validUnixDate === false) {
     res.json({ error : "Invalid Date" });
   }
-  if(req.params.date.includes("-")) {
+  else if(validStringDate) {
     var date = new Date(req.params.date);
-    const timestampInMs = date.getTime();
-
     const unixTimestamp = Math.floor(date.getTime());
     res.json({"unix": unixTimestamp, "utc": date.toUTCString()});
   } else {
     let unix_timestamp = req.params.date;
     // Create a new JavaScript Date object based on the timestamp
     // multiplied by 1000 so that the argument is in milliseconds, not seconds.
-    var date = new Date(unix_timestamp * 1000);
-    res.json({"unix": unix_timestamp, "utc": date.toUTCString()});
+    var date = new Date(parseInt(unix_timestamp));
+    res.json({"unix": parseInt(unix_timestamp), "utc": date.toUTCString()});
   }
   
 });
